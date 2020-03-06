@@ -1,0 +1,17 @@
+{
+  "name": "com.krylov-na.neat",
+  "version": "0.1.0",
+  "displayName": "Neat",
+  "description": "Declarative UI framework for Unity (using uGUI underneath)",
+  "keywords": [
+    "UI",
+    "framework",
+    "uGUI"
+  ],
+  "author": {
+    "name": "Nikita Krylov",
+    "email": "krylov.nikita.a@gmail.com",
+    "url": "https://github.com/krylov-na"
+  },
+  "type": "library"
+}
