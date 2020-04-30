@@ -5,11 +5,10 @@ namespace Neat
 { 
     public abstract class Node
     {
-        public abstract Type PType { get; }
+        public abstract Type PropsType { get; }
+
         public abstract TreeNode CreateTreeNode();
         public abstract void UpdateProps(TreeNode treeNode);
-
-        public Node child;
 
         public static implicit operator Node[](Node node)
         {
@@ -23,51 +22,49 @@ namespace Neat
     public class Node<Props> : Node
     {
         public Props props;
-        public override Type PType {
+        public override Type PropsType {
             get { return typeof(Props); }
         }
 
         public override TreeNode CreateTreeNode()
         {
-            var widgetReg = Registry.widgets[typeof(Props)];
-            if (widgetReg.Native)
+            var widgetReg = Registry.registry[typeof(Props)];
+            switch (widgetReg.RegType)
             {
-                var widget = (NativeWidget<Props>)Activator.CreateInstance(widgetReg.WidgetType);
-                return new NativeTreeNode<Props>
-                {
-                    currentProps = props,
-                    widget = widget
-                };
-            }
-            else
-            {
-                var widget = (Widget<Props>) Activator.CreateInstance(widgetReg.WidgetType);
-                return new WidgetTreeNode<Props>
-                {
-                    currentProps = props,
-                    widget = widget
-                };
+                case RegType.Widget:
+                    var widget = (Widget<Props>)Activator.CreateInstance(widgetReg.WidgetType);
+                    return new WidgetTreeNode<Props>
+                    {
+                        currentProps = props,
+                        widget = widget
+                    };
+                case RegType.Component:
+                    var component = (Component<Props>)Activator.CreateInstance(widgetReg.WidgetType);
+                    return new ComponentTreeNode<Props>
+                    {
+                        currentProps = props,
+                        component = component
+                    };
+                case RegType.Fragment:
+                    return new FragTreeNode
+                    {
+                        currentProps = (Frag)(object)props,
+                    };
+                case RegType.Element:
+                    var elementComp = new ElementWidget();
+                    return new ElementTreeNode
+                    {
+                        currentProps = (Element)(object)props,
+                        component = elementComp
+                    };
+                default:
+                    throw new Exception();
             }
         }
 
         public override void UpdateProps(TreeNode treeNode)
         {
             ((TreeNode<Props>)treeNode).currentProps = props;
-        }
-    }
-
-    public class FragNode : Node<Frag>
-    {
-        public Node[] children;
-
-        public override TreeNode CreateTreeNode()
-        {
-            var widget = new FragWidget();
-            return new FragTreeNode()
-            {
-                currentProps = props,
-                widget = widget
-            };
         }
     }
 }

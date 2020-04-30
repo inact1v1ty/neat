@@ -13,8 +13,6 @@ namespace Neat
     public abstract class TreeNode
     {
         public abstract Type PType { get; }
-        public abstract Node Render();
-        public abstract void Update();
         public abstract void Mount(GameObject root);
         public abstract void Unmount();
         public abstract GameObject GetGO(GameObject root);
@@ -35,21 +33,19 @@ namespace Neat
             get { return typeof(Props); }
         }
 
-        public override Node Render()
+        public Node Render()
         {
-            return widget.Render(currentProps);
+            return widget.Render();
         }
-
-        public override void Update() { }
 
         public override void Mount(GameObject root)
         {
-            widget.OnComponentDidMount(currentProps);
+            widget.OnComponentDidMount();
         }
 
         public override void Unmount()
         {
-            widget.OnComponentWillUnmount(currentProps);
+            widget.OnComponentWillUnmount();
         }
 
         public override GameObject GetGO(GameObject root)
@@ -58,34 +54,29 @@ namespace Neat
         }
     }
 
-    public class NativeTreeNode<Props> : TreeNode<Props>
+    public class ComponentTreeNode<Props> : TreeNode<Props>
     {
         public GameObject go;
-        public NativeWidget<Props> widget;
+        public Component<Props> component;
         public override Type PType
         {
             get { return typeof(Props); }
         }
 
-        public override Node Render()
-        {
-            return widget.Render(currentProps);
-        }
-
-        public override void Update() {
-            widget.Update(currentProps);
+        public void Update() {
+            component.Update();
         }
 
         public override void Mount(GameObject root)
         {
             go = new GameObject();
             go.transform.SetParent(root.transform);
-            widget.OnComponentDidMount(go, currentProps);
+            component.OnComponentDidMount(go);
         }
 
         public override void Unmount()
         {
-            widget.OnComponentWillUnmount(go, currentProps);
+            component.OnComponentWillUnmount();
         }
 
         public override GameObject GetGO(GameObject root)
@@ -95,6 +86,11 @@ namespace Neat
     }
 
     public class FragTreeNode : WidgetTreeNode<Frag>
+    {
+        public TreeNode[] children;
+    }
+
+    public class ElementTreeNode : ComponentTreeNode<Element>
     {
         public TreeNode[] children;
     }

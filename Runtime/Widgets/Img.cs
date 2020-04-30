@@ -1,45 +1,40 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using static Neat.DSL;
 
 namespace Neat
 {
     public struct Img
     {
-        public Color Color;
-        public Node[] Children;
+        public Color? color;
     }
 
-    public class ImgWidget : NativeWidget<Img>
+    public class ImgWidget : Component<Img>
     {
+        private static readonly Img Default = new Img
+        {
+            color = Color.white
+        };
+
         private Image image;
 
-        public override void OnComponentDidMount(GameObject gameObject, Img props)
+        public override void OnComponentDidMount(GameObject gameObject)
         {
             Debug.Log("Image OnComponentDidMount");
             image = gameObject.AddComponent<Image>();
         }
 
-        public override void OnComponentWillUnmount(GameObject gameObject, Img props)
+        public override void OnComponentWillUnmount()
         {
             Debug.Log("Image OnComponentWillUnmount");
+            Object.Destroy(image);
             image = null;
         }
 
-        public override Node Render(Img props)
-        {
-            Debug.Log("Image Render");
-            if (props.Children != null)
-            {
-                return r(new Frag() { Children = props.Children });
-            }
-            return null;
-        }
-
-        public override void Update(Img props)
+        public override void Update()
         {
             Debug.Log("Image Update");
-            image.color = props.Color;
+
+            image.color = Props.color.GetValueOrDefault(Default.color.Value);
         }
     }
 }

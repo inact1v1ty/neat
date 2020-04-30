@@ -19,7 +19,7 @@ namespace Neat
         private TreeNode DFS(Node node, TreeNode treeNode, GameObject go)
         {
             var cTreeNode = treeNode;
-            if (treeNode == null || node.PType != treeNode.PType)
+            if (treeNode == null || node.PropsType != treeNode.PType)
             {
                 treeNode?.Unmount();
                 var newTreeNode = node.CreateTreeNode();
@@ -31,7 +31,7 @@ namespace Neat
             }
             cTreeNode.Update();
 
-            if (node.PType == typeof(Frag))
+            if (node.PropsType == typeof(Frag))
             {
                 var nodeF = node as FragNode;
                 var treeNodeF = cTreeNode as FragTreeNode;

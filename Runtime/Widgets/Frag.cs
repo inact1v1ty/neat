@@ -7,12 +7,4 @@ namespace Neat
     {
         public Node[] Children;
     }
-
-    public class FragWidget : Widget<Frag>
-    {
-        public override Node Render(Frag props)
-        {
-            return null;
-        }
-    }
 }
