@@ -5,20 +5,26 @@ namespace Neat
 {
     public static class DSL
     {
-        public static Node<Props> r<Props>(Props props)
+        public static Node R<Props, T>(Props props)
+            where Props : IComponent<T>
         {
-            if (props is Frag)
+            if (props is IComponent<T>)
             {
-                // Well, that's bad code
-                return (Node<Props>)(object)new FragNode()
-                {
-                    props = (Frag)(object)props
-                };
+
             }
-            return new Node<Props>()
+
+            return null;
+        }
+
+        public static Node R<Props>(Props props)
+            where Props : IWidget
+        {
+            if (props is IWidget)
             {
-                props = props
-            };
+
+            }
+
+            return null;
         }
     }
 }

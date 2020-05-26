@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Neat
 {
-    public interface IWidget
+    public interface IComponent<T>
     {
-        Node Render();
+        void Update(T component);
     }
 }
