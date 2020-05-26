@@ -1,70 +1,39 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Neat
-{ 
+{
     public abstract class Node
     {
-        public abstract Type PropsType { get; }
-
-        public abstract TreeNode CreateTreeNode();
-        public abstract void UpdateProps(TreeNode treeNode);
-
-        public static implicit operator Node[](Node node)
-        {
-            return new Node[1]
-            {
-                node
-            };
-        }
     }
 
-    public class Node<Props> : Node
+    public class UINode: Node
     {
-        public Props props;
-        public override Type PropsType {
-            get { return typeof(Props); }
-        }
+        public string Name { get; set; }
+        public bool Leaf { get; set; }
+        public Node[] Children { get; set; }
+    }
 
-        public override TreeNode CreateTreeNode()
-        {
-            var widgetReg = Registry.registry[typeof(Props)];
-            switch (widgetReg.RegType)
-            {
-                case RegType.Widget:
-                    var widget = (Widget<Props>)Activator.CreateInstance(widgetReg.WidgetType);
-                    return new WidgetTreeNode<Props>
-                    {
-                        currentProps = props,
-                        widget = widget
-                    };
-                case RegType.Component:
-                    var component = (Component<Props>)Activator.CreateInstance(widgetReg.WidgetType);
-                    return new ComponentTreeNode<Props>
-                    {
-                        currentProps = props,
-                        component = component
-                    };
-                case RegType.Fragment:
-                    return new FragTreeNode
-                    {
-                        currentProps = (Frag)(object)props,
-                    };
-                case RegType.Element:
-                    var elementComp = new ElementWidget();
-                    return new ElementTreeNode
-                    {
-                        currentProps = (Element)(object)props,
-                        component = elementComp
-                    };
-                default:
-                    throw new Exception();
-            }
-        }
+    public class EventNode: Node
+    {
+        public string Event { get; set; }
+        public Action<RectTransform> Callback { get; set; }
+    }
 
-        public override void UpdateProps(TreeNode treeNode)
-        {
-            ((TreeNode<Props>)treeNode).currentProps = props;
-        }
+    public class SetNode : Node
+    {
+        public Action<Transform> Callback { get; set; }
+    }
+
+    public class OrderNode : Node
+    {
+        public int Order { get; set; }
+    }
+
+    public class GetOrderNode : Node
+    {
+        public Func<RectTransform, int> GetOrder { get; set; }
     }
 }
