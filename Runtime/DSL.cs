@@ -130,5 +130,10 @@ namespace Neat
         {
             return new GetOrderNode() { GetOrder = getOrder };
         }
+
+        public static RefNode BindRef(Ref @ref)
+        {
+            return new RefNode() { Ref = @ref };
+        }
     }
 }

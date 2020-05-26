@@ -36,4 +36,9 @@ namespace Neat
     {
         public Func<RectTransform, int> GetOrder { get; set; }
     }
+
+    public class RefNode : Node
+    {
+        public Ref Ref { get; set; }
+    }
 }

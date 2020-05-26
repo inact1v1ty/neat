@@ -14,6 +14,12 @@ namespace Neat
 {
     public abstract class UIBehaviour : MonoBehaviour
     {
+        class RefRepr
+        {
+            public Ref @ref;
+            public bool dirty;
+        }
+
         private readonly Dictionary<string, Type> handlers = new Dictionary<string, Type>()
         {
             { "Click", typeof(PointerClickHandler) },
@@ -60,6 +66,8 @@ namespace Neat
 
         private Dictionary<(int, int), EventHandler> handlerCache = new Dictionary<(int, int), EventHandler>();
 
+        private List<RefRepr> refs = new List<RefRepr>();
+
         protected abstract UINode Render();
         protected abstract Transform GetRoot();
 
@@ -95,7 +103,6 @@ namespace Neat
 
         private void DSLTraversal(UINode root, Transform rootTransform)
         {
-
             var newCache = new Dictionary<(int, int), EventHandler>();
 
             int DOMDfs(UINode node, Transform current)
@@ -197,6 +204,11 @@ namespace Neat
                                 Debug.LogException(ex);
                             }
                             break;
+                        case RefNode refNode:
+                            int id = refNode.Ref.id;
+                            refs[id].@ref.current = current as RectTransform;
+                            refs[id].dirty = true;
+                            break;
                     }
                 }
 
@@ -233,6 +245,35 @@ namespace Neat
 
             handlerCache.Clear();
             handlerCache = newCache;
+
+            for (int i = 0; i < refs.Count; i++)
+            {
+                if (refs[i].dirty)
+                {
+                    refs[i].dirty = false;
+                }
+                else
+                {
+                    refs[i].@ref.current = null;
+                }
+            }
+        }
+
+        protected Ref CreateRef()
+        {
+            var @ref = new Ref();
+
+            var refRepr = new RefRepr()
+            {
+                @ref = @ref,
+                dirty = false
+            };
+
+            refs.Add(refRepr);
+
+            @ref.id = refs.Count - 1;
+
+            return @ref;
         }
     }
 }
