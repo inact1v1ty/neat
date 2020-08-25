@@ -1,6 +1,6 @@
 {
   "name": "com.krylov-na.neat",
-  "version": "1.0.0",
+  "version": "1.0.1-preview.1",
   "displayName": "Neat",
   "description": "Declarative UI framework for Unity (using uGUI underneath)",
   "keywords": [

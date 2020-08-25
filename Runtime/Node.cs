@@ -27,6 +27,11 @@ namespace Neat
         public Action<Transform> Callback { get; set; }
     }
 
+    public class ElementNode : Node
+    {
+        public Func<Transform, Node[]> Callback { get; set; }
+    }
+
     public class OrderNode : Node
     {
         public int Order { get; set; }

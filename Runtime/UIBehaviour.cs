@@ -122,7 +122,42 @@ namespace Neat
                 var orderUp = new List<(int priority, Transform transform)>();
                 var orderDown = new List<(int priority, Transform transform)>();
 
-                foreach (var child in node.Children)
+                ProcessChildren(node.Children, current, children, orderUp, orderDown, ref order);
+
+                if (!node.Leaf)
+                {
+                    foreach (var unDrawn in children)
+                    {
+                        unDrawn.Value.gameObject.SetActive(false);
+                    }
+                }
+
+                orderUp.Sort((a, b) => b.priority - a.priority);
+                orderDown.Sort((a, b) => a.priority - b.priority);
+
+                for (int i = 0; i < orderUp.Count; i++)
+                {
+                    orderUp[i].transform.SetSiblingIndex(i);
+                }
+
+                for (int i = 0; i < orderDown.Count; i++)
+                {
+                    orderDown[i].transform.SetSiblingIndex(current.childCount - i - 1);
+                }
+
+                return order;
+            }
+
+            void ProcessChildren(
+                Node[] nodeChildren,
+                Transform current,
+                Dictionary<string, Transform> children,
+                List<(int priority, Transform transform)> orderUp,
+                List<(int priority, Transform transform)> orderDown,
+                ref int order
+            )
+            {
+                foreach (var child in nodeChildren)
                 {
                     switch (child)
                     {
@@ -181,6 +216,21 @@ namespace Neat
                                 throw new ElementNotFoundException($"Wrong event type: {eventNode.Event}");
                             }
                             break;
+                        case ElementNode elementNode:
+                            Node[] additionalChildren = null;
+                            try
+                            {
+                                additionalChildren = elementNode.Callback(current);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.LogException(ex);
+                            }
+                            if (additionalChildren != null)
+                            {
+                                ProcessChildren(additionalChildren, current, children, orderUp, orderDown, ref order);
+                            }
+                            break;
                         case SetNode setNode:
                             try
                             {
@@ -211,29 +261,6 @@ namespace Neat
                             break;
                     }
                 }
-
-                if (!node.Leaf)
-                {
-                    foreach (var unDrawn in children)
-                    {
-                        unDrawn.Value.gameObject.SetActive(false);
-                    }
-                }
-
-                orderUp.Sort((a, b) => b.priority - a.priority);
-                orderDown.Sort((a, b) => a.priority - b.priority);
-
-                for (int i = 0; i < orderUp.Count; i++)
-                {
-                    orderUp[i].transform.SetSiblingIndex(i);
-                }
-
-                for (int i = 0; i < orderDown.Count; i++)
-                {
-                    orderDown[i].transform.SetSiblingIndex(current.childCount - i - 1);
-                }
-
-                return order;
             }
 
             DOMDfs(root, rootTransform);

@@ -93,6 +93,17 @@ namespace Neat
         }
         #endregion
 
+        public static ElementNode Draw<T>(Func<T, Node[]> callback)
+        {
+            Func<Transform, Node[]> cb = (tr) =>
+            {
+                var t = tr.GetComponent<T>();
+                return callback(t);
+            };
+
+            return new ElementNode() { Callback = cb };
+        }
+
         public static SetNode Set<T>(Action<T> callback)
         {
             Action<Transform> cb = (tr) =>
