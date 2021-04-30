@@ -9,14 +9,14 @@ namespace Neat
     {
     }
 
-    public class UINode: Node
+    public class UINode : Node
     {
         public string Name { get; set; }
         public bool Leaf { get; set; }
         public Node[] Children { get; set; }
     }
 
-    public class EventNode: Node
+    public class EventNode : Node
     {
         public string Event { get; set; }
         public Action<RectTransform> Callback { get; set; }
@@ -45,5 +45,14 @@ namespace Neat
     public class RefNode : Node
     {
         public Ref Ref { get; set; }
+    }
+
+    public class AnimateNode : Node
+    {
+        public string AnimationName { get; set; }
+        public Type TweenType { get; set; }
+        public object Value { get; set; }
+        public bool Instant { get; set; }
+        public float Delay { get; set; }
     }
 }

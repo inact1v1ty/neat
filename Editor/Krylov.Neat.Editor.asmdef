@@ -1,0 +1,17 @@
+{
+    "name": "Krylov.Neat.Editor",
+    "references": [
+        "GUID:f0e8bbffc6c11f04bbddb152868bc50f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

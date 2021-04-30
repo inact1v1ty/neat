@@ -9,6 +9,7 @@ using Debug = UnityEngine.Debug;
 
 using Neat.Events;
 using EventHandler = Neat.Events.EventHandler;
+using Neat.Tween;
 
 namespace Neat
 {
@@ -71,7 +72,7 @@ namespace Neat
         protected abstract UINode Render();
         protected abstract Transform GetRoot();
 
-        protected void ReDraw()
+        public void ReDraw()
         {
             InternalRender();
         }
@@ -258,6 +259,17 @@ namespace Neat
                             int id = refNode.Ref.id;
                             refs[id].@ref.current = current as RectTransform;
                             refs[id].dirty = true;
+                            break;
+                        case AnimateNode animateNode:
+                            var tweens = current.GetComponents(animateNode.TweenType);
+                            foreach (var tweenObj in tweens)
+                            {
+                                var tween = (ITween)tweenObj;
+                                if (tween.AnimationName == animateNode.AnimationName)
+                                {
+                                    tween.SetValue(animateNode.Value, animateNode.Instant, animateNode.Delay);
+                                }
+                            }
                             break;
                     }
                 }
