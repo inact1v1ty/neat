@@ -146,5 +146,17 @@ namespace Neat
         {
             return new RefNode() { Ref = @ref };
         }
+
+        public static AnimateNode Animate<T>(string animationName, T value, bool instant = false, float delay = 0f)
+            where T: IEquatable<T>
+        {
+            return new AnimateNode() {
+                AnimationName = animationName,
+                TweenType = typeof(Tween.Tween<T>),
+                Value = value,
+                Instant = instant,
+                Delay = delay
+            };
+        }
     }
 }
