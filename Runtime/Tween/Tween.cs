@@ -18,11 +18,9 @@ namespace Neat.Tween
         [SerializeField]
         private string animationName;
 
-        [SerializeField]
-        private float time = 1;
+        public float time = 1;
 
-        [SerializeField]
-        private AnimationCurve animationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
         [SerializeField]
         [HideInInspector]
